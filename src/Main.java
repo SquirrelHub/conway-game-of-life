@@ -23,7 +23,7 @@ public class Main {
 		else
 			chars = new String[8];
 
-		//Check in clockwork orientation
+		//Check in clockwise orientation
 		if(condition == "top"){
 			chars[0] = b[i][j + 1];
 			chars[1] = b[i+1][j + 1];
@@ -80,9 +80,9 @@ public class Main {
 			chars[2] = b[i][j+1];
 			chars[3] = b[i+1][j+1];
 			chars[4] = b[i+1][j];
-			chars[5] = b[i+1][j+1];
-			chars[6] = b[i+1][j-1];
-			chars[7] = b[i][j-1];
+			chars[5] = b[i+1][j-1];
+			chars[6] = b[i][j-1];
+			chars[7] = b[i-1][j-1];
 		}
 		//Only count those that are alive.
 		for(String s : chars){
@@ -98,33 +98,28 @@ public class Main {
 		Main m = new Main();
 
 	    String[][] board = new String[BOARDSIZE][BOARDSIZE];
-	    int alive = 0;
+	    int alive = 0, percent = 22;
 
 	    //For randomizing the initial configuration
 	    Random rand = new Random();
 	    for (int i = 0; i < BOARDSIZE; i++){
-	         int pop = rand.nextInt(4) + 1;
-	         int[] positions = new int[pop];
-	         for (int pos : positions){
-	         	pos = rand.nextInt(9);
-	         	board[i][pos] = "O";
-			 }
 	         for (int j = 0; j < BOARDSIZE; j++){
-	         	if (board[i][j] != "O")
+	         	if (rand.nextInt(99) < percent) {
+	         		board[i][j] = "O";
+					alive++;
+				}
+				else{
 	         		board[i][j] = "x";
+				}
 			 }
         }
-		for (int i = 0; i < BOARDSIZE; i++){
-	    	for (int j = 0; j < BOARDSIZE; j++){
-	    		if (board[i][j] == "O")
-	    			alive++;
-			}
-		}
+
 		m.printBoard(board);
 	    System.out.println("\n" + alive);
 
 		while (alive > 0){
 			int nearDead = 0;
+			String[][] tempBoard = board;
 			for (int i = 0; i < BOARDSIZE; i++){
 				for (int j = 0; j < BOARDSIZE; j++){
 					if (i == 0 && j == 0 || i == 0 && j == BOARDSIZE - 1 ||
@@ -148,18 +143,19 @@ public class Main {
 						nearDead = m.checkDead(board, i, j, "none");
 					}
 					if (nearDead == 3 && board[i][j].equals("x")){
-						board[i][j] = "O";
+						tempBoard[i][j] = "O";
 						alive += 1;
 					}
 					else if (nearDead > 3 || nearDead < 2){
 						if (board[i][j].equals("O")) {
 							alive -= 1;
 						}
-						board[i][j] = "x";
+						tempBoard[i][j] = "x";
 
 					}
 				}
 			}
+			board = tempBoard;
 			m.printBoard(board);
 			System.out.println("\n" + alive + " alive\n\n");
 			try
